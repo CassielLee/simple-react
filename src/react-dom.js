@@ -597,6 +597,25 @@ export function useCallback(callback, deps) {
   return callback;
 }
 
+/**
+ * 实现useReducer
+ * @param {*} reducer
+ * @param {*} initialState
+ * @returns
+ */
+export function useReducer(reducer, initialState) {
+  hookState[hookIndex] = hookState[hookIndex] || initialState;
+  const curIndex = hookIndex;
+  const dispatch = (action) => {
+    // 更新hookState暂存的值
+    hookState[curIndex] = reducer
+      ? reducer(hookState[curIndex], action)
+      : action;
+    sheduleUpdate();
+  };
+  return [hookState[hookIndex++], dispatch];
+}
+
 const ReactDOM = {
   render,
   createPortal: render,

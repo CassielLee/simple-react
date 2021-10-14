@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "./react-dom";
+import { useState, useCallback, useMemo, useReducer } from "./react-dom";
 import {
   REACT_CONTEXT,
   REACT_ELEMENT,
@@ -126,5 +126,6 @@ const React = {
   useState,
   useCallback,
   useMemo,
+  useReducer,
 };
 export default React;

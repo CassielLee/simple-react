@@ -389,27 +389,51 @@ import ReactDOM from "./react-dom";
 //   );
 // };
 
-const Child = ({ data, handleClick }) => {
-  console.log("Child render");
-  return <button onClick={handleClick}>{data.number}</button>;
-};
-const MemoChild = React.memo(Child);
+// useCallback&useMemo
+// const Child = ({ data, handleClick }) => {
+//   console.log("Child render");
+//   return <button onClick={handleClick}>{data.number}</button>;
+// };
+// const MemoChild = React.memo(Child);
 
-const App = () => {
-  console.log("App render");
-  const [name, setName] = React.useState("zhufeng");
-  const [number, setNumber] = React.useState(0);
-  const data = React.useMemo(() => ({ number }));
-  const handleClick = React.useCallback(() => setNumber(number), [number]);
+// const App = () => {
+//   console.log("App render");
+//   const [name, setName] = React.useState("zhufeng");
+//   const [number, setNumber] = React.useState(0);
+//   const data = React.useMemo(() => ({ number }));
+//   const handleClick = React.useCallback(() => setNumber(number), [number]);
+//   return (
+//     <div>
+//       <input
+//         type="text"
+//         value={name}
+//         onChange={(event) => setName(event.target.value)}
+//       />
+//       <MemoChild data={data} handleClick={handleClick} />
+//     </div>
+//   );
+// };
+
+const reducer = (state = { number: 0 }, action) => {
+  switch (action.type) {
+    case "ADD":
+      return { number: state.number + 1 };
+    case "MINUS":
+      return { number: state.number - 1 };
+    default:
+      return state;
+  }
+};
+
+function App() {
+  const [state, dispatch] = React.useReducer(reducer, { number: 0 });
   return (
     <div>
-      <input
-        type="text"
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-      />
-      <MemoChild data={data} handleClick={handleClick} />
+      Count: {state.number}
+      <button onClick={() => dispatch({ type: "ADD" })}>+</button>
+      <button onClick={() => dispatch({ type: "MINUS" })}>-</button>
     </div>
   );
-};
+}
+
 ReactDOM.render(<App />, document.getElementById("root"));
