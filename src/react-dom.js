@@ -608,12 +608,43 @@ export function useReducer(reducer, initialState) {
   const curIndex = hookIndex;
   const dispatch = (action) => {
     // 更新hookState暂存的值
+    // 当此处reducer为null时，userReducer等同于useState，此时action就是useState传入的新状态
     hookState[curIndex] = reducer
       ? reducer(hookState[curIndex], action)
+      : typeof action === "function"
+      ? action(hookState[curIndex])
       : action;
+    // 触发更新
     sheduleUpdate();
   };
   return [hookState[hookIndex++], dispatch];
+}
+
+/**
+ * 实现useEffect
+ * @param {*} callback useEffect回调函数
+ * @param {*} deps  useEffect依赖数组
+ */
+export function useEffect(callback, deps) {
+  if (hookState[hookIndex]) {
+    const [lastCallback, lastDeps] = hookState[hookIndex];
+    const same = deps?.every((item, index) => item === lastDeps[index]);
+    if (same) {
+      hookIndex++;
+    } else {
+      lastCallback && lastCallback();
+      setTimeout(() => {
+        // 保存回调和依赖
+        hookState[hookIndex++] = [callback(), deps];
+      });
+    }
+  } else {
+    // 首次调用
+    setTimeout(() => {
+      // 保存回调和依赖
+      hookState[hookIndex++] = [callback(), deps];
+    });
+  }
 }
 
 const ReactDOM = {

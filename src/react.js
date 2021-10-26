@@ -1,4 +1,10 @@
-import { useState, useCallback, useMemo, useReducer } from "./react-dom";
+import {
+  useState,
+  useCallback,
+  useMemo,
+  useReducer,
+  useEffect,
+} from "./react-dom";
 import {
   REACT_CONTEXT,
   REACT_ELEMENT,
@@ -114,6 +120,10 @@ function memo(type, compare = shallowEqual) {
   };
 }
 
+function useContext(context) {
+  return context._currentValue;
+}
+
 const React = {
   createElement,
   Component,
@@ -127,5 +137,7 @@ const React = {
   useCallback,
   useMemo,
   useReducer,
+  useContext,
+  useEffect,
 };
 export default React;
