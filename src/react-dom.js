@@ -152,7 +152,12 @@ function mountForwardComponent(vdom) {
 function mountClassComponent(vdom) {
   const { type: ClassComponent, props, ref } = vdom;
   // 创建类组件实例
-  let classComponentInstance = new ClassComponent(props);
+  const classComponentInstance = new ClassComponent(props);
+
+  if (ref) {
+    ref.current = classComponentInstance;
+    classComponentInstance.ref = ref;
+  }
   if (ClassComponent.contextType) {
     classComponentInstance.context = ClassComponent.contextType._currentValue;
   }
@@ -677,6 +682,10 @@ export function useLayoutEffect(callback, deps) {
 export function useRef(initialState) {
   hookState[hookIndex] = hookState[hookIndex] || { current: initialState };
   return hookState[hookIndex++];
+}
+
+export function useImperativeHandle(ref, handler) {
+  ref.current = handler();
 }
 
 const ReactDOM = {

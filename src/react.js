@@ -6,6 +6,7 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  useImperativeHandle,
 } from "./react-dom";
 import {
   REACT_CONTEXT,
@@ -143,5 +144,6 @@ const React = {
   useEffect,
   useLayoutEffect,
   useRef,
+  useImperativeHandle,
 };
 export default React;
