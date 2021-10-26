@@ -647,6 +647,38 @@ export function useEffect(callback, deps) {
   }
 }
 
+/**
+ * 实现useLayoutEffect
+ * @export
+ * @param {*} callback useLayoutEffect传入的回调函数
+ * @param {*} deps useLayoutEffect传入的依赖
+ */
+export function useLayoutEffect(callback, deps) {
+  if (hookState[hookIndex]) {
+    const [lastCallback, lastDeps] = hookState[hookIndex];
+    const same = deps?.every((item, index) => item === lastDeps[index]);
+    if (same) {
+      hookIndex++;
+    } else {
+      queueMicrotask(() => {
+        lastCallback && lastCallback();
+        hookState[hookIndex++] = [callback(), deps];
+      });
+    }
+  } else {
+    // 首次调用
+    // 使用queueMicrotask，将函数插入微任务队列，保证在本轮任务队列就会调用
+    queueMicrotask(() => {
+      hookState[hookIndex++] = [callback(), deps];
+    });
+  }
+}
+
+export function useRef(initialState) {
+  hookState[hookIndex] = hookState[hookIndex] || { current: initialState };
+  return hookState[hookIndex++];
+}
+
 const ReactDOM = {
   render,
   createPortal: render,
